@@ -54,6 +54,8 @@ router.get("/menu", async (req, res) => {
 });
 
 
+
+//lägg till ny rätt i meny
 router.post("/menu", async (req, res) => {
     const menuItem = new Menu({
         name: req.body.name,
@@ -67,6 +69,21 @@ router.post("/menu", async (req, res) => {
         res.status(201).json(newMenuItem);
     } catch (error) {
         return res.status(400).json({ message: error.message})
+    }
+});
+
+router.delete("/menu:id", async (req, res) => {
+
+    try {
+        const menuItem = await Menu.findByIdAndDelete(req.params.id);
+
+        if(!menuItem) {
+            return res.json({ message: "Could not find menu item"});
+        } 
+
+        res.json({message: "Menu item deleted"})
+    } catch(error) {
+        return res.status(500).json({message: error.message});
     }
 })
 
