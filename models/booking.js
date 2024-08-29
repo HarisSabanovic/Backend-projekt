@@ -35,6 +35,11 @@ const BookingSchema = new mongoose.Schema({
         required: true
     },
 
+    amountPeople: {
+        type: Number,
+        required: true
+    },
+
 });
 
 const Booking = mongoose.model('Booking', BookingSchema );

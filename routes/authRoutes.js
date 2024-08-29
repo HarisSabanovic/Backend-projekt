@@ -35,9 +35,10 @@ router.post("/login", async (req, res) => {
   const isMatch = await bcrypt.compare(password, adminPassword);
   if (!isMatch) {
     return res.status(400).json({ message: 'Fel lösenord' });
-  } else {
-    return res.json({message: "Inloggad"})
-  }
+}
+    //genererar en jwt token
+    const token = jwt.sign({ username }, process.env.JWT_KEY, { expiresIn: '1h' });
+    res.json({ token });
 });
 
 
@@ -72,6 +73,7 @@ router.post("/menu", async (req, res) => {
     }
 });
 
+//Raderar meny rätt
 router.delete("/menu:id", async (req, res) => {
 
     try {
