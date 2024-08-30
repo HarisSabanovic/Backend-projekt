@@ -26,12 +26,12 @@ const adminPassword = bcrypt.hashSync(process.env.PASSWORD, 10);
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
-  // Kontrollera användarnamnet
+  // kontrollera användarnamnet
   if (username !== adminUsername) {
     return res.status(400).json({ message: 'Fel användarnamn' });
   }
 
-  // Kontrollera lösenordet
+  // kontrollera lösenordet
   const isMatch = await bcrypt.compare(password, adminPassword);
   if (!isMatch) {
     return res.status(400).json({ message: 'Fel lösenord' });
@@ -47,7 +47,6 @@ router.get("/menu", async (req, res) => {
 
     try {
         const menuList = await Menu.find();
-        console.log("Hämtar menylista");
         res.json(menuList);
     } catch(error) {
         return res.status(400).json({ message: error.message });
@@ -72,6 +71,27 @@ router.post("/menu", async (req, res) => {
         return res.status(400).json({ message: error.message})
     }
 });
+
+router.put("/menu/:id", async (req, res) => {
+    const { id } = req.params;
+
+    //kontrellerar ifall id är korrekt
+    if(!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Ogiltigt ID"});
+    }
+
+    try {
+        const updatedMenuItem = await Menu.findByIdAndUpdate(id, req.body, {new: true});
+
+        if(!updatedMenuItem) {
+            return res.status(404).json({ message: 'Menyrätt hittades inte' });
+        }
+
+        res.json(updatedMenuItem);
+    } catch(error) {
+        res.status(400).json({ message: 'Fel vid uppdatering av menyrätt', error });
+    }
+})
 
 //Raderar meny rätt
 router.delete("/menu:id", async (req, res) => {
