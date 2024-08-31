@@ -155,6 +155,20 @@ router.delete("/booking/:id", async (req, res) => {
     }
 });
 
+router.put("/booking/:id", async (req, res) => {
+    const { id } = req.params;
 
+    try {
+        const updatedBookingItem = await Menu.findByIdAndUpdate(id, req.body, {new: true});
+
+        if(!updatedBookingItem) {
+            return res.status(404).json({ message: 'Boooking could not be found' });
+        }
+
+        res.json(updatedMenuItem);
+    } catch(error) {
+        res.status(400).json({ message: 'Error updating booking', error });
+    }
+})
 
 module.exports = router;
