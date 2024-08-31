@@ -25,13 +25,8 @@ const BookingSchema = new mongoose.Schema({
         required: true
     },
 
-    bookingDate: {
+    bookingDateTime: {
         type: Date,
-        required: true
-    },
-
-    bookingTime: {
-        type: Number,
         required: true
     },
 

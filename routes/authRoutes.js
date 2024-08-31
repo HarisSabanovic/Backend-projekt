@@ -1,20 +1,14 @@
 
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 require("dotenv").config();
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+
 
 const Menu = require("../models/menu");
+const Booking = require("../models/booking");
 
-//connect to mongodb
-mongoose.set("strictQuery", false);
-mongoose.connect("mongodb://127.0.0.1:27017/resteraunt").then(() => { 
-    console.log("Connected to MongoDB");
-}).catch((error) => {
-    console.log(error + " Error connecting to database")
-})
 
 // admin användarnamn och lösenord
 const adminUsername = process.env.ADMINNAME;
@@ -75,10 +69,6 @@ router.post("/menu", async (req, res) => {
 router.put("/menu/:id", async (req, res) => {
     const { id } = req.params;
 
-    //kontrellerar ifall id är korrekt
-    if(!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "Ogiltigt ID"});
-    }
 
     try {
         const updatedMenuItem = await Menu.findByIdAndUpdate(id, req.body, {new: true});
@@ -94,12 +84,17 @@ router.put("/menu/:id", async (req, res) => {
 })
 
 //Raderar meny rätt
-router.delete("/menu:id", async (req, res) => {
+router.delete("/menu/:id", async (req, res) => {
+
+    const { id } = req.params;
+
+    console.log("Received ID:", id); 
 
     try {
-        const menuItem = await Menu.findByIdAndDelete(req.params.id);
+        const menuItem = await Menu.findByIdAndDelete(id);
 
         if(!menuItem) {
+            console.log("Menu item not found for ID:", id); 
             return res.json({ message: "Could not find menu item"});
         } 
 
@@ -108,5 +103,37 @@ router.delete("/menu:id", async (req, res) => {
         return res.status(500).json({message: error.message});
     }
 })
+
+router.get("/booking", async (req, res) => {
+
+    try {
+        const bookingList = await Booking.find();
+        res.json(bookingList);
+    } catch(error) {
+        return res.status(400).json({ message: error.message });
+    }
+});
+
+router.post("/booking", async (req, res) => {
+    const { firstName, lastName, email, phoneNumber, bookingDateTime, amountPeople } = req.body;
+
+    try {
+        // Skapa en ny bokning
+        const newBooking = new Booking({
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            bookingDateTime,
+            amountPeople
+        });
+
+        // Spara bokningen i databasen
+        const savedBooking = await newBooking.save();
+        res.status(201).json(savedBooking);
+    } catch (error) {
+        res.status(400).json({ message: "Fel vid skapande av bokning", error });
+    }
+});
 
 module.exports = router;

@@ -1,16 +1,27 @@
 const express = require("express");
-const cors = require('cors');
+const cors = require("cors");
 const bodyParser = require("body-parser");
-const authRoutes = require("./routes/authRoutes");
 require("dotenv").config();
+const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 const port = process.env.PORT;
 
 app.use(bodyParser.json());
 app.use(cors());
+
+//connect to mongodb
+mongoose.set("strictQuery", false);
+mongoose.connect("mongodb://127.0.0.1:27017/resteraunt").then(() => { 
+    console.log("Connected to MongoDB");
+}).catch((error) => {
+    console.log(error + " Error connecting to database")
+})
+
 
 
 //routes
@@ -41,5 +52,5 @@ function authenticateToken(req, res, next) {
 }
 
 app.listen(port, () => {
-    console.log(`Servern är igång på localhost:${port}`)
-} )
+    console.log(`Server running on port ${port}`);
+});
