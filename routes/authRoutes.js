@@ -136,4 +136,25 @@ router.post("/booking", async (req, res) => {
     }
 });
 
+
+router.delete("/booking/:id", async (req, res) => {
+
+    const { id } = req.params;
+
+    try {
+        const bookingItem = await Booking.findByIdAndDelete(id);
+
+        if(!bookingItem) {
+            console.log("Booking item not found for ID:", id); 
+            return res.json({ message: "Could not find booking item"});
+        } 
+
+        res.json({message: "Booking item deleted"})
+    } catch(error) {
+        return res.status(500).json({message: error.message});
+    }
+});
+
+
+
 module.exports = router;
