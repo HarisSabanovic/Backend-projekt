@@ -147,7 +147,7 @@ router.put("/booking/:id", async (req, res) => {
             return res.status(404).json({ message: 'Bokning hittades inte' });
         }
 
-        res.json(updatedMenuItem);
+        res.json(updatedBookingItem);
     } catch(error) {
         res.status(400).json({ message: 'Fel vid uppdatering av Bokning', error });
     }
