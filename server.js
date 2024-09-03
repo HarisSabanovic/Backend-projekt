@@ -16,11 +16,13 @@ app.use(cors());
 
 //connect to mongodb
 mongoose.set("strictQuery", false);
-mongoose.connect("mongodb+srv://haris18sabanovic:Polis2020@cluster18.rtfyp.mongodb.net/ethiquedb?retryWrites=true&w=majority").then(() => { 
+mongoose.connect("mongodb+srv://haris18sabanovic:" + process.env.DATABASE + "@cluster18.rtfyp.mongodb.net/ethiquedb?retryWrites=true&w=majority").then(() => { 
     console.log("Connected to MongoDB");
 }).catch((error) => {
     console.log(error + " Error connecting to database")
 })
+
+
 
 //routes
 app.use("/api", authRoutes);
